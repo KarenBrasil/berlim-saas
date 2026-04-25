@@ -71,14 +71,16 @@ export const obras = {
       .eq('id', id)
       .single(),
 
-  criar: (obra: any) =>
-    supabase
+  criar: async (obra: any) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    return supabase
       .from('obras')
       .insert([{
         ...obra,
-        responsavel_id: (await supabase.auth.getUser()).data.user?.id
+        responsavel_id: user?.id
       }])
-      .select(),
+      .select();
+  },
 
   atualizar: (id: string, updates: any) =>
     supabase
