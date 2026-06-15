@@ -16,6 +16,14 @@ export const auth = {
   login: (email: string, password: string) =>
     supabase.auth.signInWithPassword({ email, password }),
 
+  loginWithGoogle: () =>
+    supabase.auth.signInWithOAuth({ 
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    }),
+
   register: (email: string, password: string, nome: string) =>
     supabase.auth.signUp({
       email,
