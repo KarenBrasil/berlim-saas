@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './services/supabase';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Obras from './pages/Obras';
 import Demandas from './pages/Demandas';
 import Funcionarios from './pages/Funcionarios';
 import Materiais from './pages/Materiais';
+import Configuracoes from './pages/Configuracoes';
+import Orcamentos from './pages/Orcamentos';
 import { AuthState } from './types';
 import './styles/index.css';
 
@@ -84,11 +87,15 @@ export default function App() {
     <Router>
       <Routes>
         <Route
-          path="/login"
-          element={auth.isAuthenticated ? <Navigate to="/" /> : <Login onLoginSuccess={(user) => setAuth({ user, isLoading: false, isAuthenticated: true })} />}
+          path="/"
+          element={<Home />}
         />
         <Route
-          path="/"
+          path="/login"
+          element={auth.isAuthenticated ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={(user) => setAuth({ user, isLoading: false, isAuthenticated: true })} />}
+        />
+        <Route
+          path="/dashboard"
           element={auth.isAuthenticated ? <Dashboard user={auth.user!} /> : <Navigate to="/login" />}
         />
         <Route
@@ -106,6 +113,14 @@ export default function App() {
         <Route
           path="/materiais"
           element={auth.isAuthenticated ? <Materiais user={auth.user!} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/configuracoes"
+          element={auth.isAuthenticated ? <Configuracoes user={auth.user!} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/orcamentos"
+          element={auth.isAuthenticated ? <Orcamentos user={auth.user!} /> : <Navigate to="/login" />}
         />
       </Routes>
     </Router>

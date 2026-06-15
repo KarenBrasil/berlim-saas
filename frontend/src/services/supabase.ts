@@ -379,3 +379,64 @@ export const documentos = {
       .delete()
       .eq('id', id)
 };
+
+// ========================
+// CONFIGURAÇÕES DA EMPRESA
+// ========================
+export const configuracoes = {
+  obter: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { data: null, error: new Error('Usuário não autenticado') };
+    
+    return supabase
+      .from('configuracoes_empresa')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+  },
+
+  salvar: async (config: any) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { data: null, error: new Error('Usuário não autenticado') };
+
+    // Tentar obter para saber se fazemos insert ou update
+    const { data: existente } = await supabase
+      .from('configuracoes_empresa')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (existente) {
+      return supabase
+        .from('configuracoes_empresa')
+        .update({ ...config, atualizado_em: new Date().toISOString() })
+        .eq('user_id', user.id)
+        .select();
+    } else {
+      return supabase
+        .from('configuracoes_empresa')
+        .insert([{ ...config, user_id: user.id }])
+        .select();
+    }
+  },
+
+  uploadLogo: async (arquivo: File) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { data: null, error: new Error('Usuário não autenticado') };
+
+    const extensao = arquivo.name.split('.').pop();
+    const caminho = `logos/${user.id}-${Date.now()}.${extensao}`;
+    
+    const { data, error } = await supabase.storage
+      .from('obras') // Vamos usar o mesmo bucket existente
+      .upload(caminho, arquivo, { upsert: true });
+
+    if (error) return { data: null, error };
+
+    const { data: publicUrlData } = supabase.storage
+      .from('obras')
+      .getPublicUrl(caminho);
+
+    return { data: publicUrlData.publicUrl, error: null };
+  }
+};

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut, Home, Briefcase, CheckSquare, Users, Package } from 'lucide-react';
+import { Menu, X, LogOut, Home, Briefcase, CheckSquare, Users, Package, Settings, FileText } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { User } from '../types';
 
@@ -26,6 +26,8 @@ export default function Navigation({ user, onLogout }: NavigationProps) {
     { label: 'Demandas', path: '/demandas', icon: CheckSquare },
     { label: 'Funcionários', path: '/funcionarios', icon: Users },
     { label: 'Materiais', path: '/materiais', icon: Package },
+    { label: 'Gerar Orçamentos', path: '/orcamentos', icon: FileText },
+    { label: 'Configurações', path: '/configuracoes', icon: Settings },
   ];
 
   return (
